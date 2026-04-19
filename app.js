@@ -333,7 +333,7 @@
   // Beta review capture. Submissions go to the REVIEW_EMAIL below via formsubmit.co.
   // To change destination: edit REVIEW_EMAIL. First submission will trigger a one-time
   // activation email from formsubmit.co — confirm it and every review after lands in inbox.
-  const REVIEW_EMAIL = 'albinchristothomas@gmail.com';
+  const REVIEW_EMAIL = 'evananil.jr@gmail.com';
   const reviewModal = document.getElementById('review-modal');
   const reviewForm = document.getElementById('review-form');
   const reviewClose = document.querySelector('.review-close');
