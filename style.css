@@ -110,17 +110,58 @@ a { color: inherit; text-decoration: none; }
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 0 40px;
-  opacity: 0; transition: opacity 0.4s ease;
+  opacity: 0;
+}
+/* Soft cinematic scrim that appears behind text for legibility against video backgrounds */
+.text-block::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 50%,
+      rgba(5, 10, 20, 0.62) 0%,
+      rgba(5, 10, 20, 0.38) 35%,
+      rgba(5, 10, 20, 0.12) 65%,
+      transparent 85%);
+  opacity: 0; pointer-events: none; z-index: -1;
+  transition: opacity 0.9s var(--ease-out-expo);
 }
 .text-block.visible { opacity: 1; }
+.text-block.visible::before { opacity: 1; }
+
+/* Text depth — subtle but does the lifting against busy frames */
+.hero-title,
+.cinematic-quote,
+.section-header h2,
+.project-title,
+.philosophy,
+.tools-title,
+.contact-block h2,
+#review-title {
+  text-shadow: 0 2px 20px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.4);
+}
+.hero-sub,
+.project-desc,
+.tools-kicker,
+.tag,
+.tag-sep,
+.skill,
+.tool-chip,
+.social-link,
+.contact-email,
+.review-sub,
+.nav-link,
+.wordmark,
+#scroll-hint {
+  text-shadow: 0 1px 10px rgba(0,0,0,0.55);
+}
 
 .text-block.text-left { align-items: flex-start; text-align: left; padding-left: 12vw; }
 .text-block.text-right { align-items: flex-end; text-align: right; padding-right: 12vw; }
 
 /* ── Hero ── */
 .hero-title {
-  font-family: var(--font-display); font-size: clamp(72px, 12vw, 160px);
+  font-family: var(--font-display); font-size: clamp(56px, 11vw, 150px);
   font-weight: 800; letter-spacing: 0.08em; line-height: 1; margin-bottom: 16px;
+  white-space: nowrap;
 }
 .hero-title .char {
   display: inline-block; opacity: 0; transform: translateY(40px) rotateX(40deg);
@@ -452,8 +493,11 @@ a { color: inherit; text-decoration: none; }
   .text-block.text-left,
   .text-block.text-right { padding-left: 22px; padding-right: 22px; align-items: center; text-align: center; }
 
-  .hero-title { font-size: clamp(64px, 22vw, 110px); letter-spacing: 0.06em; }
-  .hero-sub { font-size: 12px; letter-spacing: 0.22em; }
+  .hero-title {
+    font-size: clamp(44px, 16vw, 78px); letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .hero-sub { font-size: 11px; letter-spacing: 0.2em; }
   .hero-line { margin-top: 18px; }
   .text-block.visible .hero-line { width: 72px; }
 
@@ -493,7 +537,14 @@ a { color: inherit; text-decoration: none; }
   #ui-nav { padding: 12px 14px; }
   .nav-right { gap: 10px; }
   .nav-link { font-size: 9px; }
-  .hero-title { font-size: clamp(56px, 20vw, 90px); }
+  .hero-title { font-size: clamp(40px, 14vw, 64px); letter-spacing: 0.03em; }
+  .cinematic-quote { font-size: clamp(19px, 5.4vw, 24px); }
+  .section-header h2 { font-size: clamp(22px, 7vw, 32px); }
+  .project-title { font-size: clamp(20px, 6vw, 26px); }
+  .philosophy { font-size: clamp(16px, 5vw, 22px); }
+  .tools-title { font-size: clamp(22px, 6.5vw, 30px); }
+  .contact-block h2 { font-size: clamp(26px, 8vw, 36px); }
+  .tool-chip, .skill { font-size: 9px; padding: 6px 11px; letter-spacing: 0.1em; }
 }
 
 /* Reduce motion for accessibility */

@@ -142,6 +142,37 @@
     textBlocksByGroup[gi].push(block);
   });
 
+  // Cinematic easing via GSAP (falls back gracefully when GSAP hasn't loaded yet)
+  let cineEase = 'expo.out';
+  function ensureGsap() {
+    if (!window.gsap) return false;
+    if (!cineEase._registered && window.CustomEase) {
+      try {
+        gsap.registerPlugin(CustomEase);
+        CustomEase.create('cine', '0.16, 1, 0.3, 1');
+        cineEase = 'cine';
+        cineEase._registered = true;
+      } catch (e) { /* keep expo.out */ }
+    }
+    return true;
+  }
+
+  function animateBlock(block, show) {
+    if (!ensureGsap()) return; // CSS opacity on .visible will still work
+    gsap.killTweensOf(block);
+    if (show) {
+      gsap.fromTo(block,
+        { opacity: 0, y: 34, scale: 0.975, filter: 'blur(6px)' },
+        { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+          duration: 1.15, ease: cineEase, overwrite: true });
+    } else {
+      gsap.to(block, {
+        opacity: 0, y: -20, scale: 0.99, filter: 'blur(4px)',
+        duration: 0.55, ease: 'power2.inOut', overwrite: true,
+      });
+    }
+  }
+
   function updateTextBlocks() {
     const wh = window.innerHeight;
     spacerEls.forEach((spacer, gi) => {
@@ -153,10 +184,14 @@
       blocks.forEach((block) => {
         const enter = parseFloat(block.dataset.enter);
         const leave = parseFloat(block.dataset.leave);
-        if (progress >= enter && progress <= leave) {
+        const shouldShow = progress >= enter && progress <= leave;
+        const isShowing = block.classList.contains('visible');
+        if (shouldShow && !isShowing) {
           block.classList.add('visible');
-        } else {
+          animateBlock(block, true);
+        } else if (!shouldShow && isShowing) {
           block.classList.remove('visible');
+          animateBlock(block, false);
         }
       });
     });
