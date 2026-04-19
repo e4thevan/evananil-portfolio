@@ -83,8 +83,9 @@ a { color: inherit; text-decoration: none; }
 /* ── Canvas Layer ── */
 #canvas-layer {
   position: fixed; inset: 0; z-index: 1;
+  transform: translateZ(0);
 }
-#canvas { width: 100%; height: 100%; display: block; }
+#canvas { width: 100%; height: 100%; display: block; will-change: contents; }
 
 /* ── Text Layer ── */
 #text-layer {
@@ -148,6 +149,8 @@ a { color: inherit; text-decoration: none; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 0 40px;
   opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 /* Soft cinematic scrim that appears behind text for legibility against video backgrounds */
 .text-block::before {

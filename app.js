@@ -237,13 +237,13 @@
     gsap.killTweensOf(block);
     if (show) {
       gsap.fromTo(block,
-        { opacity: 0, y: 34, scale: 0.975, filter: 'blur(6px)' },
-        { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
-          duration: 1.15, ease: cineEase, overwrite: true });
+        { opacity: 0, y: 28, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1,
+          duration: 1.0, ease: cineEase, overwrite: true, force3D: true });
     } else {
       gsap.to(block, {
-        opacity: 0, y: -20, scale: 0.99, filter: 'blur(4px)',
-        duration: 0.55, ease: 'power2.inOut', overwrite: true,
+        opacity: 0, y: -16, scale: 0.995,
+        duration: 0.5, ease: 'power2.inOut', overwrite: true, force3D: true,
       });
     }
   }
