@@ -399,27 +399,32 @@
   const reviewForm = document.getElementById('review-form');
   const reviewClose = document.querySelector('.review-close');
   const reviewSendBtn = document.querySelector('.review-send');
-  let reviewShown = false;
-  const REVIEW_SEEN_KEY = 'evan_review_seen_v1';
+  const leaveReviewBtn = document.getElementById('leave-review-btn');
+  // sessionStorage: only auto-opens once per session. The CTA button still works anytime.
+  const REVIEW_AUTOSHOWN_KEY = 'evan_review_autoshown_v1';
 
-  function openReview() {
-    if (reviewShown) return;
-    if (localStorage.getItem(REVIEW_SEEN_KEY) === '1') return;
-    reviewShown = true;
+  function openReview(viaButton) {
     reviewModal.classList.add('open');
     reviewModal.setAttribute('aria-hidden', 'false');
+    reviewModal.classList.remove('sent');
+    if (!viaButton) sessionStorage.setItem(REVIEW_AUTOSHOWN_KEY, '1');
+  }
+  if (leaveReviewBtn) {
+    leaveReviewBtn.addEventListener('click', () => openReview(true));
   }
   function closeReview() {
     reviewModal.classList.remove('open');
     reviewModal.setAttribute('aria-hidden', 'true');
   }
 
-  // Watch for end of scroll
+  // Watch for end of scroll — auto-open once per session
   function checkEndOfScroll() {
+    if (sessionStorage.getItem(REVIEW_AUTOSHOWN_KEY) === '1') return;
+    if (reviewModal.classList.contains('open')) return;
     const sh = document.documentElement.scrollHeight - window.innerHeight;
     if (sh <= 0) return;
-    const nearEnd = (window.scrollY / sh) >= 0.98;
-    if (nearEnd) openReview();
+    const nearEnd = (window.scrollY / sh) >= 0.95;
+    if (nearEnd) openReview(false);
   }
   window.addEventListener('scroll', () => {
     if (!hasScrolled) return;
@@ -455,9 +460,15 @@
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error('bad response');
-      localStorage.setItem(REVIEW_SEEN_KEY, '1');
       reviewModal.classList.add('sent');
       setTimeout(closeReview, 2600);
+      // Reset the form so the CTA button can re-open fresh next time
+      setTimeout(() => {
+        reviewForm.reset();
+        reviewModal.classList.remove('sent');
+        reviewSendBtn.disabled = false;
+        reviewSendBtn.querySelector('.review-send-label').textContent = 'Send';
+      }, 3200);
     } catch (err) {
       reviewSendBtn.disabled = false;
       reviewSendBtn.querySelector('.review-send-label').textContent = 'Try again';

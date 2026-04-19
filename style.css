@@ -410,6 +410,25 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-muted); transition: color 0.3s;
 }
 .social-link:hover { color: var(--text-primary); }
+
+.leave-review-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 28px;
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--warm-amber); background: transparent;
+  border: 1px solid rgba(212,165,116,0.5);
+  border-radius: 100px; padding: 12px 22px;
+  cursor: pointer;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.6s var(--ease-out-expo) 0.45s,
+              transform 0.6s var(--ease-out-expo) 0.45s,
+              background 0.3s, color 0.3s, border-color 0.3s;
+}
+.leave-review-btn svg { transition: transform 0.3s var(--ease-out-expo); }
+.leave-review-btn:hover { background: var(--warm-amber); color: var(--deep-navy); border-color: var(--warm-amber); }
+.leave-review-btn:hover svg { transform: translateX(3px); }
+.text-block.visible .leave-review-btn { opacity: 1; transform: translateY(0); }
 .text-block.visible .contact-block h2,
 .text-block.visible .contact-email,
 .text-block.visible .social-row { opacity: 1; transform: translateY(0); }
