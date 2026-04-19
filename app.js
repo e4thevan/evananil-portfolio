@@ -348,6 +348,48 @@
     setTimeout(() => { updateTextBlocks(); updateProgress(); onScroll(); }, 50);
   });
 
+  // ── Visit Counter ──
+  // Uses abacus.jasoncameron.dev (free hit-counter API, no signup).
+  // /hit/NS/KEY increments; /get/NS/KEY reads without incrementing.
+  const COUNTER_NS = 'evananil-com';
+  const COUNTER_KEY = 'visits-v1';
+  const VISIT_SEEN_KEY = 'evan_visit_counted_v1';
+  const visitCounter = document.getElementById('visit-counter');
+  const visitNumEl = document.getElementById('visit-num');
+  function animateCount(target) {
+    const dur = 1200;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = Math.floor(eased * target);
+      visitNumEl.textContent = val.toLocaleString();
+      if (t < 1) requestAnimationFrame(tick);
+      else visitNumEl.textContent = target.toLocaleString();
+    }
+    requestAnimationFrame(tick);
+  }
+  function showVisits(count) {
+    if (typeof count !== 'number' || isNaN(count)) return;
+    visitCounter.classList.add('ready');
+    animateCount(count);
+  }
+  (async () => {
+    try {
+      const alreadyCounted = sessionStorage.getItem(VISIT_SEEN_KEY) === '1';
+      const endpoint = alreadyCounted
+        ? `https://abacus.jasoncameron.dev/get/${COUNTER_NS}/${COUNTER_KEY}`
+        : `https://abacus.jasoncameron.dev/hit/${COUNTER_NS}/${COUNTER_KEY}`;
+      const res = await fetch(endpoint);
+      if (!res.ok) throw new Error('counter');
+      const data = await res.json();
+      sessionStorage.setItem(VISIT_SEEN_KEY, '1');
+      showVisits(data.value);
+    } catch (e) {
+      visitCounter.classList.remove('ready');
+    }
+  })();
+
   // ── Review Modal ──
   // Beta review capture. Submissions go to the REVIEW_EMAIL below via formsubmit.co.
   // To change destination: edit REVIEW_EMAIL. First submission will trigger a one-time
