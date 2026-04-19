@@ -1,11 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evan's Portfolio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evan — Multimedia Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Coming soon</h1>
+
+  <!-- ── Loading Screen ── -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-name" aria-hidden="true">
+        <span>E</span><span>V</span><span>A</span><span>N</span>
+      </div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <p class="loader-text"><span id="loader-percent">0</span>%</p>
+    </div>
+  </div>
+
+  <!-- ── Layer 1: Canvas (frame renderer) ── -->
+  <div id="canvas-layer">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- ── Layer 2: Text overlays (all fixed, toggled by JS) ── -->
+  <div id="text-layer">
+    <!-- NAV -->
+    <nav id="ui-nav">
+      <div class="nav-left"><a href="#" class="wordmark">EVAN</a></div>
+      <div class="nav-right">
+        <a href="#" class="nav-link">Work</a>
+        <a href="#" class="nav-link">About</a>
+        <a href="#" class="nav-link">Contact</a>
+      </div>
+    </nav>
+
+    <div id="scroll-progress"><div class="progress-fill"></div></div>
+
+    <div id="scroll-hint">
+      <span>Scroll</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1v10M2 7l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- GROUP 0 text overlays -->
+    <div class="text-block" data-group="0" data-enter="0" data-leave="0.14">
+      <h1 class="hero-title" data-split>EVAN</h1>
+      <p class="hero-sub">Multimedia Designer</p>
+      <div class="hero-line"></div>
+    </div>
+
+    <div class="text-block" data-group="0" data-enter="0.22" data-leave="0.38">
+      <div class="tag-row">
+        <span class="tag">3D</span>
+        <span class="tag-sep">/</span>
+        <span class="tag">Motion</span>
+        <span class="tag-sep">/</span>
+        <span class="tag">Visual Design</span>
+      </div>
+    </div>
+
+    <div class="text-block" data-group="0" data-enter="0.48" data-leave="0.65">
+      <h2 class="cinematic-quote">Crafting worlds between<br/>pixels and light</h2>
+    </div>
+
+    <!-- GROUP 1 text overlays -->
+    <div class="text-block" data-group="1" data-enter="0.02" data-leave="0.10">
+      <div class="section-header">
+        <div class="header-line"></div>
+        <h2>Selected Work</h2>
+      </div>
+    </div>
+
+    <div class="text-block text-left" data-group="1" data-enter="0.16" data-leave="0.28">
+      <div class="project-card">
+        <span class="project-label">01</span>
+        <h3 class="project-title">Ethereal Landscapes</h3>
+        <p class="project-desc">A series of 3D environments exploring the boundary between reality and imagination. Built in Cinema 4D with hand-painted textures.</p>
+      </div>
+    </div>
+
+    <div class="text-block text-right" data-group="1" data-enter="0.34" data-leave="0.46">
+      <div class="project-card">
+        <span class="project-label">02</span>
+        <h3 class="project-title">Motion Studies</h3>
+        <p class="project-desc">Explorations in procedural animation and particle systems. Each piece is a meditation on movement, physics, and color.</p>
+      </div>
+    </div>
+
+    <div class="text-block" data-group="1" data-enter="0.54" data-leave="0.66">
+      <blockquote class="philosophy">
+        "Design is not just what it looks like.<br/>Design is how it makes you feel."
+      </blockquote>
+    </div>
+
+    <div class="text-block" data-group="1" data-enter="0.72" data-leave="0.84">
+      <div class="skills-grid">
+        <span class="skill">Cinema 4D</span>
+        <span class="skill">After Effects</span>
+        <span class="skill">Blender</span>
+        <span class="skill">Figma</span>
+        <span class="skill">Unreal Engine</span>
+        <span class="skill">Photoshop</span>
+      </div>
+    </div>
+
+    <div class="text-block" data-group="1" data-enter="0.82" data-leave="0.92">
+      <div class="tools-block">
+        <span class="tools-kicker">Crafted with</span>
+        <h3 class="tools-title">Tools &amp; Craft</h3>
+        <div class="tools-divider"></div>
+        <div class="tools-grid">
+          <span class="tool-chip">HTML</span>
+          <span class="tool-chip">CSS</span>
+          <span class="tool-chip">JavaScript</span>
+          <span class="tool-chip">Runway</span>
+          <span class="tool-chip">Gemini</span>
+          <span class="tool-chip">GPT</span>
+          <span class="tool-chip">Claude</span>
+          <span class="tool-chip">After Effects</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-block" data-group="1" data-enter="0.94" data-leave="1.0">
+      <div class="contact-block">
+        <h2>Let's Create</h2>
+        <a href="mailto:hello@evan.design" class="contact-email">hello@evan.design</a>
+        <div class="social-row">
+          <a href="#" class="social-link">Instagram</a>
+          <a href="#" class="social-link">Behance</a>
+          <a href="#" class="social-link">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Layer 0: Scroll spacer (invisible, just provides scroll height) ── -->
+  <div id="scroll-spacer">
+    <div id="group0-spacer"></div>
+    <div id="group1-spacer"></div>
+  </div>
+
+  <!-- ── Review Modal (appears at end of scroll) ── -->
+  <div id="review-modal" aria-hidden="true">
+    <div class="review-backdrop"></div>
+    <div class="review-card" role="dialog" aria-modal="true" aria-labelledby="review-title">
+      <button class="review-close" aria-label="Close">&times;</button>
+      <div class="review-inner">
+        <span class="review-kicker">
+          <span class="kicker-stamp">
+            <span class="kicker-alpha">Alpha</span>
+            <span class="kicker-beta">Beta</span>
+          </span>
+          <span class="kicker-sep">·</span>
+          <span class="kicker-tail">Your thoughts</span>
+        </span>
+        <h2 id="review-title">Leave a note</h2>
+        <p class="review-sub">What did you feel? What worked, what didn't? One line or a paragraph — all of it helps.</p>
+        <form id="review-form" novalidate>
+          <input type="text" name="name" placeholder="Your name (optional)" autocomplete="name" />
+          <textarea name="message" placeholder="Your review…" rows="4" required></textarea>
+          <input type="text" name="_honey" class="review-honey" tabindex="-1" autocomplete="off" />
+          <button type="submit" class="review-send">
+            <span class="review-send-label">Send</span>
+            <span class="review-send-arrow">&rarr;</span>
+          </button>
+        </form>
+        <div class="review-thanks">
+          <div class="review-check">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M6 14l5 5 11-11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Thank you.</h3>
+          <p>Your note is on its way.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
