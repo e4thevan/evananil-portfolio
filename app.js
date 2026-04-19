@@ -300,8 +300,6 @@
         if (rect.bottom > 0 && rect.top < wh) {
           const sH = spacer.offsetHeight;
           const progress = Math.min(1, Math.max(0, -rect.top / (sH - wh)));
-          // Warped progress: frames advance slowly during text dwells
-          const frameProgress = warpProgress(progress, groupWarp[gi]);
           const isFirst = gi === 0;
           const startOffset = isFirst ? 0 : Math.floor(OVERLAP_FRAMES * getGroupTotalFrames(group));
           const hasNext = gi < groups.length - 1;
@@ -309,7 +307,7 @@
           if (group.panToNext && hasNext && progress >= PAN_START) {
             const panRaw = (progress - PAN_START) / (1 - PAN_START);
             const panProgress = easeInOutCubic(panRaw);
-            const currentFrame = getGroupFrame(group, frameProgress, startOffset);
+            const currentFrame = getGroupFrame(group, progress, startOffset);
             const nextGroup = groups[gi + 1];
             const nextTotal = getGroupTotalFrames(nextGroup);
             const nextIdx = Math.min(nextTotal - 1, Math.floor(panRaw * OVERLAP_FRAMES * nextTotal));
@@ -320,7 +318,7 @@
             }
             drawComposite(currentFrame, nextFrame, panProgress);
           } else {
-            drawFrame(getGroupFrame(group, frameProgress, startOffset));
+            drawFrame(getGroupFrame(group, progress, startOffset));
           }
           drawn = true;
           break;
