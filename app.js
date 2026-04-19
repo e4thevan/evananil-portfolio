@@ -134,6 +134,60 @@
   // Spacer elements for scroll measurement
   const spacerEls = groups.map((g) => document.getElementById(g.spacerId));
 
+  // ── Scroll dwell / "slow breaks" on text sections ──
+  // During a text block's [enter, leave] window, frame advance slows to HOLD_WEIGHT
+  // so users naturally dwell on the text instead of scrolling past it.
+  const HOLD_WEIGHT = 0.18; // 18% of normal speed during text dwells
+  function buildWarpSegments(holdsRaw) {
+    if (!holdsRaw || !holdsRaw.length) return [{ ps: 0, pe: 1, fps: 0, fpe: 1 }];
+    const holds = holdsRaw
+      .map(h => ({ start: Math.max(0, h.start), end: Math.min(1, h.end) }))
+      .filter(h => h.end > h.start)
+      .sort((a, b) => a.start - b.start);
+    const merged = [];
+    for (const h of holds) {
+      if (merged.length && h.start <= merged[merged.length - 1].end) {
+        merged[merged.length - 1].end = Math.max(merged[merged.length - 1].end, h.end);
+      } else merged.push({ ...h });
+    }
+    const segs = [];
+    let cursor = 0;
+    for (const h of merged) {
+      if (h.start > cursor) segs.push({ ps: cursor, pe: h.start, w: 1 });
+      segs.push({ ps: h.start, pe: h.end, w: HOLD_WEIGHT });
+      cursor = h.end;
+    }
+    if (cursor < 1) segs.push({ ps: cursor, pe: 1, w: 1 });
+    let total = 0;
+    for (const s of segs) total += (s.pe - s.ps) * s.w;
+    let acc = 0;
+    for (const s of segs) {
+      s.fps = acc / total;
+      acc += (s.pe - s.ps) * s.w;
+      s.fpe = acc / total;
+    }
+    return segs;
+  }
+  function warpProgress(p, segs) {
+    if (p <= 0) return 0;
+    if (p >= 1) return 1;
+    for (const s of segs) {
+      if (p <= s.pe) {
+        const t = (p - s.ps) / Math.max(1e-6, s.pe - s.ps);
+        return s.fps + t * (s.fpe - s.fps);
+      }
+    }
+    return 1;
+  }
+  // Derive holds per group from the DOM (single source of truth: data-enter/leave)
+  const groupWarp = groups.map((_, gi) => {
+    const raw = [];
+    document.querySelectorAll(`.text-block[data-group="${gi}"]`).forEach(b => {
+      raw.push({ start: parseFloat(b.dataset.enter), end: parseFloat(b.dataset.leave) });
+    });
+    return buildWarpSegments(raw);
+  });
+
   // Text blocks grouped by data-group
   const textBlocksByGroup = {};
   document.querySelectorAll('.text-block[data-group]').forEach((block) => {
@@ -225,6 +279,8 @@
         if (rect.bottom > 0 && rect.top < wh) {
           const sH = spacer.offsetHeight;
           const progress = Math.min(1, Math.max(0, -rect.top / (sH - wh)));
+          // Warped progress: frames advance slowly during text dwells
+          const frameProgress = warpProgress(progress, groupWarp[gi]);
           const isFirst = gi === 0;
           const startOffset = isFirst ? 0 : Math.floor(OVERLAP_FRAMES * getGroupTotalFrames(group));
           const hasNext = gi < groups.length - 1;
@@ -232,7 +288,7 @@
           if (group.panToNext && hasNext && progress >= PAN_START) {
             const panRaw = (progress - PAN_START) / (1 - PAN_START);
             const panProgress = easeInOutCubic(panRaw);
-            const currentFrame = getGroupFrame(group, progress, startOffset);
+            const currentFrame = getGroupFrame(group, frameProgress, startOffset);
             const nextGroup = groups[gi + 1];
             const nextTotal = getGroupTotalFrames(nextGroup);
             const nextIdx = Math.min(nextTotal - 1, Math.floor(panRaw * OVERLAP_FRAMES * nextTotal));
@@ -243,7 +299,7 @@
             }
             drawComposite(currentFrame, nextFrame, panProgress);
           } else {
-            drawFrame(getGroupFrame(group, progress, startOffset));
+            drawFrame(getGroupFrame(group, frameProgress, startOffset));
           }
           drawn = true;
           break;
