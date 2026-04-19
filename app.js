@@ -1,4 +1,25 @@
 (() => {
+  // ── Rotate-for-full-experience prompt (mobile portrait only) ──
+  const rotatePrompt = document.getElementById('rotate-prompt');
+  const isMobilePortrait = () => window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
+  const ROTATE_SEEN_KEY = 'evan_rotate_seen_v1';
+  function dismissRotate() {
+    if (!rotatePrompt.classList.contains('show')) return;
+    rotatePrompt.classList.add('dismissed');
+    sessionStorage.setItem(ROTATE_SEEN_KEY, '1');
+    setTimeout(() => rotatePrompt.classList.remove('show', 'dismissed'), 600);
+  }
+  if (isMobilePortrait() && sessionStorage.getItem(ROTATE_SEEN_KEY) !== '1') {
+    rotatePrompt.classList.add('show');
+    rotatePrompt.setAttribute('aria-hidden', 'false');
+    rotatePrompt.addEventListener('click', dismissRotate, { once: false });
+    rotatePrompt.addEventListener('touchend', dismissRotate, { passive: true });
+  }
+  // Auto-dismiss if the user rotates to landscape
+  window.addEventListener('orientationchange', () => {
+    if (!isMobilePortrait()) dismissRotate();
+  });
+
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
   const loader = document.getElementById('loader');
