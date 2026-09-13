@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10282e">
+<meta name="description" content="Kenny’s Pond becomes your photo safari. Stay at the bench, frame the water, and photograph strange ducks in a 30-second Townie Play challenge.">
+<title>Pond Paparazzi · Townie Play</title>
+<link rel="icon" href="assets/mint.webp" type="image/webp">
+<link rel="stylesheet" href="styles.css?v=2">
+<link rel="preload" href="assets/mint.webp" as="image">
+</head>
+<body>
+<main id="app" data-state="landing">
+<video id="camera" autoplay playsinline muted aria-hidden="true"></video>
+<canvas id="game" aria-label="Tap a fictional duck to photograph it"></canvas>
+<div id="duckTargets" hidden aria-label="Photograph a duck"></div>
+<div id="flash" aria-hidden="true"></div>
+<div id="liveBadge" hidden><span></span><b id="modeLabel">LIVE AT KENNY’S POND</b></div>
+
+<section class="screen active" id="landing" aria-labelledby="gameTitle">
+<header class="brand"><span class="brand-symbol">t.</span> townie<span class="brand-light">play</span><span class="edition">FIELD GAME / 001</span></header>
+<div class="intro-layout">
+  <div class="intro-copy">
+    <p class="eyebrow">KENNY’S POND · ST. JOHN’S, NL</p>
+    <h1 id="gameTitle">Pond<br><em>Paparazzi.</em></h1>
+    <p class="lede">A little strange.<br>A little camera magic.</p>
+    <p class="instructions">Point at the pond. Tap the curious ducks.<br>You have 30 seconds to get the shot.</p>
+    <div class="intro-actions"><button class="primary" id="playButton"><span class="camera-icon" aria-hidden="true"></span> Let’s play <span>↗</span></button><button class="text-button" id="previewButton">Just looking? Try practice →</button></div>
+  </div>
+  <div class="field-art" aria-label="Meet the mint duck, speedy coral duck, and rare golden duck">
+    <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+    <div class="art-caption">TODAY’S VERY UNUSUAL LOCALS</div>
+    <div class="duck-card card-mint"><span class="card-index">01 / THE LOCAL</span><img src="assets/mint.webp" alt="Mint duck" width="320" height="320"><span class="card-points">100 <small>PTS</small></span></div>
+    <div class="duck-card card-gold"><span class="card-index">04 / GOLDEN HOUR</span><img src="assets/golden.webp" alt="Golden crowned duck" width="320" height="320"><span class="card-points">1,000 <small>PTS</small></span></div>
+    <div class="duck-card card-fast"><span class="card-index">02 / THE SPEEDSTER</span><img src="assets/fast.webp" alt="Coral duck wearing goggles" width="320" height="320"><span class="card-points">200 <small>PTS</small></span></div>
+    <span class="challenge-stamp">30<span>SECOND<br>SAFARI</span></span>
+  </div>
+</div>
+<footer class="intro-footer"><span>PLAY POINT 01 <span class="dot">·</span> Stay at the bench, safely back from the water.</span><span>Camera stays on your phone.</span></footer>
+</section>
+
+<section class="screen modal-screen" id="loading" aria-live="polite" hidden><div class="modal"><div class="loader"></div><p class="eyebrow">GETTING YOUR VIEWFINDER READY</p><h2>Opening your camera…</h2><p>Allow camera access when your browser asks.<br>No microphone or location needed.</p><button class="text-button" id="cancelCamera">Back</button></div></section>
+<section class="screen modal-screen" id="rotate" hidden><div class="modal"><div class="phone-icon" aria-hidden="true">↶</div><p class="eyebrow">A WIDER WINDOW ON THE POND</p><h2>Turn your phone sideways.</h2><p>Stay at the bench and point toward the water.</p><button class="text-button" id="portraitButton">Use portrait view instead</button></div></section>
+<section class="screen camera-screen" id="align" hidden>
+<div class="align-heading"><p class="eyebrow" id="alignEyebrow">ONE QUICK ALIGNMENT</p><h2 id="alignTitle">Find the far shore.</h2><p>Match the dashed line to where the opposite trees meet the water.</p></div>
+<div id="shoreGuide"><span>FAR SHORE</span></div>
+<div id="nearGuide"><span>KEEP THE NEAR EDGE ABOVE ROCKS / REEDS</span></div>
+<div class="align-controls">
+<div class="sliders"><label>Far shore<input id="shoreline" aria-label="Far shoreline height" type="range" min="25" max="56" value="39"></label><label>Near edge<input id="nearline" aria-label="Near water edge height" type="range" min="65" max="89" value="84"></label></div>
+<div class="align-extras"><button class="text-button compact" id="motionButton">Enable turn reminder</button><span id="motionNote">Keep still. Realign anytime.</span></div>
+<button class="primary" id="readyButton">Ready · 30 seconds <span>→</span></button>
+</div>
+<button class="icon-button align-exit" id="alignExit" aria-label="Return to start">×</button>
+</section>
+<section class="screen camera-screen countdown-screen" id="countdown" hidden aria-live="assertive"><div id="countNumber">3</div><p>Tap a duck to take its photo.</p><small>Keep your feet—and your phone—steady.</small></section>
+<section id="hud" hidden>
+<div class="hud-top"><div class="score-panel"><small>SCORE</small><strong id="score">0</strong></div><div class="round-phase" id="phase">MEET THE LOCALS</div><div class="time-panel"><small>TIME LEFT</small><strong id="timer">30<span>s</span></strong><div class="time-track"><div id="timeFill"></div></div></div></div>
+<div class="focus-frame" aria-hidden="true"><i></i><i></i><i></i><i></i><span>+</span></div>
+<div id="feedback" role="status" aria-live="polite"></div>
+<div class="hud-bottom"><button class="pill" id="pauseButton">Ⅱ Pause / realign</button><span id="shotHint">TAP A DUCK TO PHOTOGRAPH</span><button id="shutterButton" aria-label="Photograph the centre of the view"><span class="camera-icon"></span></button></div>
+</section>
+<section class="screen modal-screen" id="paused" hidden><div class="modal"><p class="eyebrow">TIME & SCORE ARE SAFE</p><h2 id="pauseTitle">Point back toward the pond.</h2><p id="pauseText">Stay at your bench. Match the shoreline again when you’re ready.</p><button class="primary" id="resumeButton">Realign & resume <span>→</span></button><button class="text-button" id="endButton">Finish this round</button></div></section>
+<section class="screen" id="results" hidden aria-labelledby="resultTitle">
+<header class="brand"><span class="brand-symbol">t.</span> townie<span class="brand-light">play</span><span class="edition">KENNY’S POND / 001</span></header>
+<div class="results-layout"><div class="result-main"><p class="eyebrow" id="resultMode">THAT’S A WRAP</p><h2 id="resultTitle">A fine eye for<br><em>the unusual.</em></h2><div id="finalScore">0</div><p id="rank">A fresh pair of pond eyes.</p><div class="result-stats"><span><b id="finalPhotos">0</b> photos</span><span><b id="finalCombo">0×</b> best combo</span><span><b id="accuracy">0%</b> accuracy</span></div><p id="personalBest"></p><div class="result-actions"><button class="primary" id="againButton">One more safari <span>↻</span></button><button class="text-button" id="doneButton">Back to the bench</button></div></div><div class="result-art"><div class="result-photo"><img id="resultDuck" src="assets/mint.webp" alt="Your pond character" width="320" height="320"><span id="goldenResult">KENNY’S POND · PHOTO FINISH</span></div><p>Unusual ducks. Excellent company.</p></div></div>
+</section>
+<section class="screen modal-screen" id="error" hidden aria-live="assertive"><div class="modal"><p class="eyebrow">LET’S GET YOU BACK TO THE POND</p><h2 id="errorTitle">We couldn’t open the camera.</h2><p id="errorText"></p><button class="primary" id="retryButton">Try again <span>↻</span></button><button class="text-button" id="errorDemo">Play practice instead</button><button class="text-button compact" id="errorBack">Back to start</button></div></section>
+<button class="sound-button" id="soundButton" aria-label="Mute sound" aria-pressed="false">♪ <span>Sound on</span></button>
+<noscript><div class="noscript">Pond Paparazzi needs JavaScript enabled to play.</div></noscript>
+</main>
+<script type="module" src="app.js?v=2"></script>
+</body>
+</html>
